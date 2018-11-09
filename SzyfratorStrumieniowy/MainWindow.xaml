@@ -5,8 +5,118 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SzyfratorStrumieniowy"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="Generator Progowy" Height="600" Width="800"
+        ResizeMode="CanMinimize"
+        WindowStartupLocation="CenterScreen">
+    <TabControl x:Name="tabControl" Background="#21232C">
+        <TabItem Header="Szyfrator strumieniowy">
+                <Grid Background="#21232C">
+                <ScrollViewer ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <StackPanel Background="MistyRose" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" Margin="10" VerticalAlignment="Top" Width="768">
+                        <TextBlock x:Name="cipherTitle" Margin="15,10,15,0"  TextWrapping="Wrap" VerticalAlignment="Top" FontSize="24" FontFamily="Helvetica" FontWeight="Light" Width="Auto" TextAlignment="Center" Text="Szyfrator strumieniowy z wykorzystaniem generatora progowego"/>
+                        <Border BorderBrush="Black" BorderThickness="0,1,0,0" Margin="15,8" />
+                        <WrapPanel Margin="10 5">
+                            <StackPanel Width="714" Margin="10" HorizontalAlignment="Left">
+                                <Button x:Name="loadFile" Click="loadFile_Click"  Background="AliceBlue" Height="32" Content="Wczytaj plik"/>
+                                <TextBox x:Name="textToBeCiphered" MaxHeight="120" MinHeight="30" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" Background="#21232C" Foreground="#E4DFDA" Padding="6" Margin="0,10, 0,5" TextWrapping="Wrap" FontSize="12" Text="" />
+                            </StackPanel>
+                        </WrapPanel>
+                        <WrapPanel>
+                            <StackPanel Width="390" Margin="10" HorizontalAlignment="Left">
+                                <WrapPanel Margin="10 5">
+                                    <TextBlock FontSize="14" FontWeight="DemiBold" Foreground="Black" Text="Ile rejestrów wygenerować?" />
+                                    <ComboBox Background="Azure" x:Name="howMuchRegistersComboBox" Margin="30 0" FontSize="12" Width="40" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" SelectionChanged="howMuchRegistersComboBox_SelectionChanged">
+                                        <ComboBoxItem Background="Linen" IsSelected="True">3</ComboBoxItem>
+                                        <ComboBoxItem Background="Azure">5</ComboBoxItem>
+                                        <ComboBoxItem Background="Lavender">7</ComboBoxItem>
+                                        <ComboBoxItem Background="LemonChiffon">9</ComboBoxItem>
+                                    </ComboBox>
+                                </WrapPanel>
+                                <DockPanel Margin="10 5">
+                                    <TextBlock FontSize="14" FontWeight="DemiBold" Foreground="Black" Text="Maksymalna długość rejestru: " />
+                                    <TextBox  x:Name="maximumLengthOfRegisterTextBox" TextChanged="maximumLengthOfRegisterTextBox_TextChanged" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="{Binding ElementName=slValue, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right"  Width="40" PreviewTextInput="maximumLengthOfRegisterTextBox_PreviewTextInput" />
+                                    <Slider Minimum="5" Maximum="25" Margin="5 0"  TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" Name="slValue" />
+                                </DockPanel>
+                                <WrapPanel Margin="10 5">
+                                    <TextBlock FontSize="14" FontWeight="DemiBold" Foreground="Black" Text="Rodzaj wielomianów: " />
+                                    <RadioButton  Margin="5 3 10 0"  x:Name="randomPolynomiansRadioButton" IsChecked="True" Content="Losowe"/>
+                                    <RadioButton  Margin="5 3 10 0" x:Name="perfectPolynomiansRadioButton"  Content="Pierwotne" />
+                                </WrapPanel>
+                                <WrapPanel Margin="10 0">
+                                    <Button Width="182.5" x:Name="generateRegisters" Click="generateRegisters_Click"  Background="Azure" Margin="0,0,5,0" Height="32" Content="Generuj rejestry"/>
+                                    <Button Width="182.5" x:Name="loadRegisters" Click="loadRegisters_Click"  Background="AliceBlue" Height="32" Content="Wczytaj rejestry"/>
+                                </WrapPanel>
+                                <ScrollViewer  Margin="0 10 0 10" MaxHeight="170" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
+                                    <StackPanel x:Name="generatedRegistersStackPanel"></StackPanel>
+                                </ScrollViewer>
+                                <WrapPanel Margin="10 10" x:Name="keyLengthWrapPanel" Visibility="Collapsed">
+                                    <TextBlock FontSize="14" FontWeight="DemiBold" Foreground="Black" Text="Jak długi klucz wygenerować?" />
+                                    <TextBox  x:Name="keyLengthTextBox" MaxLength="7" Margin="10, 0, 0, 10" PreviewTextInput="keyLengthTextBox_PreviewTextInput" TextChanged="keyLengthTextBox_TextChanged" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="20000"  Width="150" />
+                                </WrapPanel>
+                                <Button x:Name="generateKeyBtn" Visibility="Collapsed" Click="generateKeyBtn_Click"  Background="LemonChiffon" Margin="10,5" Height="32" Content="Generuj klucz"/>
+                                <Button x:Name="stopKeyBtn"  Visibility="Collapsed" Click="stopKeyBtn_Click"  Background="IndianRed" Margin="10,5" Height="32" Content="STOP"/>
+
+                            </StackPanel>
+                            <StackPanel Width="324" Margin="10 10 0 10" HorizontalAlignment="Right">
+                                <WrapPanel Margin="10 0">
+                                    <TextBlock FontSize="14"  Foreground="Black" Text="Wygenerowanych znaków: "/>
+                                    <TextBlock FontSize="14" x:Name="counter" FontWeight="DemiBold" Foreground="Black" Text="0"/>
+                                    <TextBlock FontSize="14"  Foreground="Black" Text=" w "/>
+                                    <TextBlock FontSize="14"  x:Name="time" FontWeight="DemiBold" Foreground="Black" Text="0m 0s 0ms"/>
+                                </WrapPanel>
+                                <TextBox x:Name="keyTextBox" MaxHeight="368" MinHeight="368" VerticalScrollBarVisibility="Auto" IsReadOnly="True" AcceptsReturn="True" Background="#21232C" Foreground="#E4DFDA" Padding="6" Margin="10,0,10,5" TextWrapping="Wrap" FontSize="12" Text="" />
+                                <WrapPanel>
+                                    <Button x:Name="keySaveButton" Visibility="Hidden" Width="154.4" Click="keySaveButton_Click" Background="Linen" Margin="10,0,5,5" Height="32" Content="Zapisz klucz do pliku"/>
+                                    <Button x:Name="infoSaveButton" Visibility="Collapsed" Width="154.4" Click="infoSaveButton_Click" Background="BlanchedAlmond" Margin="0,0,10,5" Height="32" Content="Zapisz rejestry do pliku"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </WrapPanel>
+                        <WrapPanel x:Name="cipheredWrapPanel">
+                            <StackPanel Width="734" Margin="10 5">
+                                <WrapPanel>
+                                    <Button x:Name="cipherButton" Visibility="Visible" Width="154.4" Click="cipherButton_Click" Background="Honeydew" Margin="10,0,5,5" Height="32" Content="Szyfruj"/>
+                                    <Button x:Name="decipherButton" Visibility="Visible" Width="154.4" Click="decipherButton_Click" Background="Moccasin" Margin="0,0,10,5" Height="32" Content="Deszfyruj"/>
+                                </WrapPanel>
+                                <TextBox x:Name="cipheredText" MaxHeight="120" MinHeight="30" VerticalScrollBarVisibility="Auto" IsReadOnly="True" AcceptsReturn="True" Background="#21232C" Foreground="#E4DFDA" Padding="6" Margin="10,0,10,5" TextWrapping="Wrap" FontSize="12" Text="" />
+                            </StackPanel>
+                        </WrapPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+            
+        </TabItem>
+        <TabItem Header="Pomoc">
+            <ScrollViewer>
+                <TextBox x:Name="help" FontSize="12" AcceptsReturn="True" TextWrapping="Wrap" IsReadOnly="True"/>
+            </ScrollViewer>
+        </TabItem>
+        <TabItem Header="Krok po kroku">
+            <ScrollViewer ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <StackPanel x:Name="stepbystepStackPanel" >
+                    <StackPanel  Margin="70 20">
+                        <TextBlock FontSize="14" Foreground="AntiqueWhite" Text="Wprowadź zawartość rejestrów: kolejno 3, 4 i 5 bitów"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="t1a" Grid.Column="0" Text="101" Margin="0 5 10 5" TextChanged="t1a_TextChanged" MaxLength="3"  Height="Auto"  MinHeight="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                            <TextBox x:Name="t1b" Grid.Column="1" Text="0010" Margin="10 5 10 5" TextChanged="t1a_TextChanged" MaxLength="4"  Height="Auto"  MinHeight="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                            <TextBox x:Name="t1c" Grid.Column="2" Text="10111" Margin="10 5 0 5" TextChanged="t1a_TextChanged" MaxLength="5"  Height="Auto"  MinHeight="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                        </Grid>
+                        <Button x:Name="b1" Content="Kolejny krok" Height="40" Click="b1_Click"/>
+                    </StackPanel>
+                    <StackPanel Margin="70 10" x:Name="sp2" Visibility="Collapsed">
+                        <TextBlock FontSize="14" Foreground="AntiqueWhite" Text="Przedstawienie rejestrów."/>
+                        <StackPanel Background="AntiqueWhite"  Margin="0 10 0 10" x:Name="generatedRegistersStackPanelStepByStep"></StackPanel>
+                        <Button x:Name="b2" Content="Kolejna iteracja" Height="40" Click="b2_Click"/>
+                        <TextBlock FontSize="13" Margin="0 10 0 0" Foreground="AntiqueWhite" Text="Jeśli więcej niż połowa rejestrów wypchnie 1 to do klucza dodana zostaje 1, w przeciwnym wypadku 0."/>
+                        <TextBox x:Name="stepByStepKeyTextBox" MaxHeight="100" MinHeight="30" VerticalScrollBarVisibility="Auto" IsReadOnly="True" AcceptsReturn="True" Background="AliceBlue" Foreground="Black" Padding="6" Margin="0,10,0,5" TextWrapping="Wrap" FontSize="12" Text=""></TextBox>
+                    </StackPanel>
+
+                </StackPanel>
+            </ScrollViewer>
+        </TabItem>
+    </TabControl>
 </Window>
