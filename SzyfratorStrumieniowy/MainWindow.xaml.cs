@@ -26,13 +26,15 @@ namespace SzyfratorStrumieniowy
         private bool stop = false;
         private String keyGlobal = "";
 
+        private int licznik = 0;
+
         private static Random random = new Random();
         private List<int> registersLengths = new List<int>();
         private List<KeyValuePair<BitArray,BitArray>> registers = new List<KeyValuePair<BitArray, BitArray>>();
         private  List<KeyValuePair<BitArray,BitArray>> registersStepByStep = new  List<KeyValuePair<BitArray,BitArray>>();
         private  List<KeyValuePair<BitArray,BitArray>> registersBackup = new  List<KeyValuePair<BitArray,BitArray>>();
         private List<KeyValuePair<short, BitArray>> perfectPolynomians = new List<KeyValuePair<short, BitArray>>();
-        private String helpText = "Autor: Damian Szkudlarek\nRodzaj generatora: Generator progowy\n\nZasada działania generatora progowego opiera się na wspólnej pracy, nieparzystej liczby rejestrów LSFR.\nPrzykład działania:\nZałóżmy że mamy 3 rejestry o różnej długości.W każdej iteracji bity rejestrów przesuwane są o jeden w prawo, tak, że ostatni bit zostaje wypchnięty, a na miejsce pierwszego dostaje się reszta z dzielenia przez dwa wyniku mnożenia rejestru z wielomianem.\nW kolejnym kroku należy zliczyć ile rejestrów wypchnęło bit prawdy. Jeśli suma ta przekracza połowę ilości rejestrów to do klucza dodajemy 1, w przeciwnym przypadku 0.\nWizualizacja przykładu działania generatora znajduje się w zakładce Krok po kroku\n\nWażne!\nGdy długości rejestrów są względnie pierwsze,a wielomiany gałęzi sprzężenia zwrotnego pierwotne, to okres tego generatora jest maksymalny.\nSzum generatora można zauważyć przy długości rejestrów powyżej 10. Wcześniej zauważyć można powatarzający się wzór.\n\n\nFunkcje programu:\n\t-Generowanie rejestrów LSFR,\n\t\t*Ręczne ustawienie parametrów:\n\t\t\t>Liczba rejestrów do wygenerowania,\n\t\t\t>Maksymalna długość pojedynczego rejestru,\n\t\t\t>Wybór pomiędzy losowymi wielomianami, a pierwotnymi*,\n\t-Wizualizacja rejestrów(x) i ich wielomianów(a),\n\t-Wybór długości klucza do wygenerowania,\n\t-Przycisk STOP, przerywający generowanie klucza,\n\t-Pomiar liczby wygenerowanych znaków oraz czasu, w jakim się to stało,\n\t-Zapis wygenerowanego klucza do pliku tekstowego lub binarnego,\n\t-Zapis rejestrów do pliku\n\t-Wczytanie rejestrów z pliku\n\n*Pierwotne wielomiany przedstawione zostały w dodatku w książce Schneier B. Kryptografia dla praktyków\n\n\nUwagi odnośnie programu:\n\t-Generowanie rejestrów nie wykonuje się automatycznie. Po zmianie parametrów należy każdorazowo wcisnąć przycisk Generuj rejestry.\n\t-Program obsługuje tylko pliki tekstowe i binarne.\n\t-Maksymalna długość rejestru została ograniczona w celach prezentacyjnych.\n\t-W programie rejestr i wielomian mają taką samą długość, dodatkowa jedynka przed wielomianem nie wpływa na obliczenia i ma funkcję tylko symboliczną.\n\t-Przy wczytaniu rejestrów z pliku:\n\t\t*Jeśli długość rejestru i wielomianu różni się lub wielomian nie został podany, to wielomian zostaje zastąpiony odpowiadającym długości rejestru, wielomianem pierwotnym.\n\t\t*Jeśli w rejestrze znajdują się same zera, to ostatnie zero zostaje zamienione na jedynkę.\n\t\t*Jeśli w wielomianie najstarszy bit nie jest jedynką to zostaje zamieniony na jedynkę.\n\t\t*Linie pliku, które nie zostały zapisane w odpowiednim formacie zostają pominięte.\n\t\t*Jeśli w pliku zapisano mniej niż 3 poprawne rejestry, lub parzystą liczbę poprawnych rejestrów to wczytywanie zakończy się niepowodzeniem.\n\t\t*Jeśli w pliku dwa rejestry mają taką samą długość to wczytywanie pliku zakończy się niepowodzeniem.\n\nPrzykład obsługi programu - generowanie rejestrów\nKrok 1.\n\tWybierz liczbę rejestrów do wygenerowania.\nKrok 2.\n\tWybierz maksymalną długość rejestru.\nKrok 3.\n\tWybierz rodzaj wielomianu, preferowany Pierwotne.\nKrok 4. \n\tNaciśnij przycisk Generuj rejestry.\n\n\n\n\nPrzykład obsługi programu - generowanie klucza \nKrok 1.\n\tGdy wygenerowano lub wczytano już rejestry, należy wpisać długość klucza.\nKrok 2.\n\tNaciśnij przycisk Generuj klucz.\nKrok 3.\n\tJeśli generowanie klucza trwa za długo, wciśnij przycisk STOP - przerwie to pracę generatora i wyświetli obok część klucza.\nKrok 4. \n\tZapisz klucz do pliku.\nKrok 5.\n\tZapisz rejestry do pliku.\n\n\n\n\nPrzykład obsługi programu - wczytanie rejestów\nKrok 1.\n\tNaciśnij przycisk Wczytaj rejestry.\nKrok 2.\n\tWybierz plik do wczytania. Plik powinien być zapisany w odpowiednim formacie 'rejestr; wielomian' - taki jak przy zapisie rejestrów do pliku.\nKrok 3.\n\tObejrzyj rejestry poniżej.\n";
+        private String helpText = "Autor: Damian Szkudlarek\n\nSzyfrator strumieniowy\n\nZałożenia:\nDane wejściowe:\n\t-W pole Tekst jawny wprowadzić można litery alfabetu angielskiego, cyfry, wszystkie znaki specjalne dostępne z klawiatury,\n\t-W pole Klucz wprowadzić można ciąg binarny, tzn. składający się z 0 i 1,\n\t-Długość wprowadzanych danych nie została ograniczona przez autora, lecz przez twórców WPF i wynosi 2 miliardy znaków.\n\t-Wprowadzanie bardzo długich ciągów znakowych może prowadzić do długiego przetwarzania lub zakończenia pracy programu\nDane wyjściowe:\n\t-W polu wynikowym wyprowadzony zostaje zaszyfrowany ciąg binarny lub znakowy. Widok BIN/ASCII można zmieniać klikając w przycisk Zmień widok.\n\t-Trzy przyciski pod polem wynikowym pozwalają na zapis zaszyfrowanego ciągu w postaci ciągu binarnego, tekstowego lub w postaci pliku binarnego.\n\nInformacje dodatkowe:\n\t-W karcie Generator progowy można wygenerować klucz o odpowiedniej długości.\n\t-W procesie deszyfrowania należy w pole Tekst jawny wprowadzić zaszyfrowany ciąg binarny.\n\t-W procesie szyfrowania nalezy w pole Tekst jawny wprowadzić tekst do zaszyfrowania.\n\nZasada działania szyfratora:\nTekst jawny zostaje zamieniony na postać binarną. Jeśli klucz nie jest takiej samej długości jak binarna postać tekstu jawnego, to klucz zostaje\nodpowiednio dostosowany do tekstu. Kluczowa w szyfrowaniu jest operacja XOR, czyli alternatywa rozłączna wykonywana między kluczem a tekstem jawnym.\nW wyniku XORa dostajemy zaszyfrowany tekst.\nProces deszyfracji wygląda odwrotnie, tzn. XOR'ujemy zaszyfrowany ciąg binarny z kluczem.\n\n---------------------------------------------------------------------------------------------------------------------------------------\nRodzaj generatora: Generator progowy\nZasada działania generatora progowego opiera się na wspólnej pracy, nieparzystej liczby rejestrów LSFR.\nPrzykład działania:\nZałóżmy że mamy 3 rejestry o różnej długości.W każdej iteracji bity rejestrów przesuwane są o jeden w prawo, tak, że ostatni bit zostaje wypchnięty, a na miejsce pierwszego dostaje się reszta z dzielenia przez dwa wyniku mnożenia rejestru z wielomianem.\nW kolejnym kroku należy zliczyć ile rejestrów wypchnęło bit prawdy. Jeśli suma ta przekracza połowę ilości rejestrów to do klucza dodajemy 1, w przeciwnym przypadku 0.\nWizualizacja przykładu działania generatora znajduje się w zakładce Krok po kroku\n\nWażne!\nGdy długości rejestrów są względnie pierwsze,a wielomiany gałęzi sprzężenia zwrotnego pierwotne, to okres tego generatora jest maksymalny.\nSzum generatora można zauważyć przy długości rejestrów powyżej 10. Wcześniej zauważyć można powatarzający się wzór.\n\n\nFunkcje programu:\n\t-Generowanie rejestrów LSFR,\n\t\t*Ręczne ustawienie parametrów:\n\t\t\t>Liczba rejestrów do wygenerowania,\n\t\t\t>Maksymalna długość pojedynczego rejestru,\n\t\t\t>Wybór pomiędzy losowymi wielomianami, a pierwotnymi*,\n\t-Wizualizacja rejestrów(x) i ich wielomianów(a),\n\t-Wybór długości klucza do wygenerowania,\n\t-Przycisk STOP, przerywający generowanie klucza,\n\t-Pomiar liczby wygenerowanych znaków oraz czasu, w jakim się to stało,\n\t-Zapis wygenerowanego klucza do pliku tekstowego lub binarnego,\n\t-Zapis rejestrów do pliku\n\t-Wczytanie rejestrów z pliku\n\n*Pierwotne wielomiany przedstawione zostały w dodatku w książce Schneier B. Kryptografia dla praktyków\n\n\nUwagi odnośnie programu:\n\t-Generowanie rejestrów nie wykonuje się automatycznie. Po zmianie parametrów należy każdorazowo wcisnąć przycisk Generuj rejestry.\n\t-Program obsługuje tylko pliki tekstowe i binarne.\n\t-Maksymalna długość rejestru została ograniczona w celach prezentacyjnych.\n\t-W programie rejestr i wielomian mają taką samą długość, dodatkowa jedynka przed wielomianem nie wpływa na obliczenia i ma funkcję tylko symboliczną.\n\t-Przy wczytaniu rejestrów z pliku:\n\t\t*Jeśli długość rejestru i wielomianu różni się lub wielomian nie został podany, to wielomian zostaje zastąpiony odpowiadającym długości rejestru, wielomianem pierwotnym.\n\t\t*Jeśli w rejestrze znajdują się same zera, to ostatnie zero zostaje zamienione na jedynkę.\n\t\t*Jeśli w wielomianie najstarszy bit nie jest jedynką to zostaje zamieniony na jedynkę.\n\t\t*Linie pliku, które nie zostały zapisane w odpowiednim formacie zostają pominięte.\n\t\t*Jeśli w pliku zapisano mniej niż 3 poprawne rejestry, lub parzystą liczbę poprawnych rejestrów to wczytywanie zakończy się niepowodzeniem.\n\t\t*Jeśli w pliku dwa rejestry mają taką samą długość to wczytywanie pliku zakończy się niepowodzeniem.\n\nPrzykład obsługi programu - generowanie rejestrów\nKrok 1.\n\tWybierz liczbę rejestrów do wygenerowania.\nKrok 2.\n\tWybierz maksymalną długość rejestru.\nKrok 3.\n\tWybierz rodzaj wielomianu, preferowany Pierwotne.\nKrok 4. \n\tNaciśnij przycisk Generuj rejestry.\n\n\n\n\nPrzykład obsługi programu - generowanie klucza \nKrok 1.\n\tGdy wygenerowano lub wczytano już rejestry, należy wpisać długość klucza.\nKrok 2.\n\tNaciśnij przycisk Generuj klucz.\nKrok 3.\n\tJeśli generowanie klucza trwa za długo, wciśnij przycisk STOP - przerwie to pracę generatora i wyświetli obok część klucza.\nKrok 4. \n\tZapisz klucz do pliku.\nKrok 5.\n\tZapisz rejestry do pliku.\n\n\n\n\nPrzykład obsługi programu - wczytanie rejestów\nKrok 1.\n\tNaciśnij przycisk Wczytaj rejestry.\nKrok 2.\n\tWybierz plik do wczytania. Plik powinien być zapisany w odpowiednim formacie 'rejestr; wielomian' - taki jak przy zapisie rejestrów do pliku.\nKrok 3.\n\tObejrzyj rejestry poniżej.\n";
         private BitArray keyBitArray;
         Stopwatch sw = new Stopwatch();
         private BitArray loadedKeyBit;
@@ -43,7 +45,6 @@ namespace SzyfratorStrumieniowy
 
         public MainWindow()
         {
-
             CreatePerfectPolynomians();
             InitializeComponent();
             help.Text = helpText;
@@ -157,6 +158,48 @@ namespace SzyfratorStrumieniowy
             perfectPolynomians.Add(new KeyValuePair<short, BitArray>(23, CreatePolynomian(new List<short>() { 24, 4, 3, 1, 0 })));
             perfectPolynomians.Add(new KeyValuePair<short, BitArray>(24, CreatePolynomian(new List<short>() { 25, 3, 0 })));
             perfectPolynomians.Add(new KeyValuePair<short, BitArray>(25, CreatePolynomian(new List<short>() { 26, 6, 2, 1, 0 })));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(26, CreatePolynomian(new List<short>() { 27, 5, 2, 1, 0 })));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(27, CreatePolynomian(new List<short>() { 28, 3, 0 })));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(28, CreatePolynomian(new List<short>() { 29, 2, 0 })));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(29, CreatePolynomian(new List<short>() { 30, 6, 4, 1, 0 })));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(30, CreatePolynomian(new List<short>() { 31, 13, 0 })));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(31, CreatePolynomian(new List<short>() { 32, 7, 5, 3, 2, 1, 0 })));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(32, CreatePolynomian(new List<short>() { 33, 16, 4, 1, 0 })));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(33, CreatePolynomian(new List<short>() { 34, 7, 6, 5, 2, 1, 0 })));
+
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(34, CreatePolynomian(new List<short>() { 35, 2, })));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(35, CreatePolynomian(new List<short>() { 36, 6,5,4,2,1,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(36, CreatePolynomian(new List<short>() { 37, 6,4,1,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(37, CreatePolynomian(new List<short>() { 38, 6,5,1,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(38, CreatePolynomian(new List<short>() { 39,  4,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(39, CreatePolynomian(new List<short>() { 40,  5,4,3,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(40, CreatePolynomian(new List<short>() { 41,  3,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(41, CreatePolynomian(new List<short>() { 42,  5,4,3,2,1,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(42, CreatePolynomian(new List<short>() { 43,  6,4,3,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(43, CreatePolynomian(new List<short>() { 44,  6,5,2,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(44, CreatePolynomian(new List<short>() { 45,  4,3,1,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(45, CreatePolynomian(new List<short>() { 46,  8,5,3,2,1,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(46, CreatePolynomian(new List<short>() { 47,  5,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(47, CreatePolynomian(new List<short>() { 48,  7,5,4,2,1,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(48, CreatePolynomian(new List<short>() { 49,  6,5,4,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(49, CreatePolynomian(new List<short>() { 50,  4,3,2,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(50, CreatePolynomian(new List<short>() { 51,  6,3,1,0})));
+
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(51, CreatePolynomian(new List<short>() { 52,   6,2,1,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(52, CreatePolynomian(new List<short>() { 53,   6,2,1,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(53, CreatePolynomian(new List<short>() { 54,   6,5,4,3,2,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(54, CreatePolynomian(new List<short>() { 55,   24,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(55, CreatePolynomian(new List<short>() { 56,   7,4,2,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(56, CreatePolynomian(new List<short>() { 57,   5,3,2,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(57, CreatePolynomian(new List<short>() { 58,   6,5,1,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(58, CreatePolynomian(new List<short>() { 59,   6,5,4,3,1,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(59, CreatePolynomian(new List<short>() { 60,   1,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(60, CreatePolynomian(new List<short>() { 61,   5,2,1,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(61, CreatePolynomian(new List<short>() { 62,   6,5,3,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(62, CreatePolynomian(new List<short>() { 63,   1,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(63, CreatePolynomian(new List<short>() { 64,   4,3,1,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(64, CreatePolynomian(new List<short>() { 65,   18,0})));
+            perfectPolynomians.Add(new KeyValuePair<short, BitArray>(65, CreatePolynomian(new List<short>() { 66,   8,6,5,3,2,0})));
         }
 
         private BitArray CreatePolynomian(List<short> list)
@@ -176,22 +219,31 @@ namespace SzyfratorStrumieniowy
         }
         #endregion
 
-        #region Utworzenie rejestru
-        private KeyValuePair<BitArray,BitArray> CreateRegister()
+        #region Funkcje do względnej pierwszości liczb
+        private int NWD(int a, int b)
         {
-           
-            int randomNumber = -1;
-            do
-            {
-                randomNumber = GenerateRandom(1, 3, maximumLengthOfRegister + 1)[0];
-            } while (registersLengths.Contains(randomNumber));
-            registersLengths.Add(randomNumber);
+            if (b == 0)
+                return a;
+            return NWD(b, (a % b));
+        }
+        private bool isFirstWithEveryItem(int a, List<int> list)
+        {
+            var y = list.Where(x => NWD(a, x) == 1).Select(x => x);
+            if (y.Count() == list.Count())
+                return true;
+            else
+                return false;
+        }
+        #endregion
+
+        #region Utworzenie rejestru
+        private KeyValuePair<BitArray,BitArray> CreateRegister(int randomNumber)
+        { 
             BitArray registerContent = new BitArray(randomNumber);
             BitArray polynomial = new BitArray(randomNumber);
 
             for (int i = 0; i < randomNumber - 1; i++)
             {
-                //polynomial.Add(GenerateRandom(1, 0, 2)[0].ToString());
                 polynomial.Set(i, GenerateRandom());
             }
             for (int i = 0; i < randomNumber; i++)
@@ -226,9 +278,20 @@ namespace SzyfratorStrumieniowy
             }
             return ToBitArray(sb.ToString());
         }
-        public BitArray ToBitArray(string str)
+        private BitArray ToBitArray(string str)
         {
             BitArray ret = new BitArray(str.Length);
+            for (int i = 0; i < str.Length; i++)
+            {
+                if (str[i] == '1')
+                    ret[i] = true;
+                else ret[i] = false;
+            }
+            return ret;
+        }
+        private bool[] ToBoolArray(string str)
+        {
+            bool[] ret = new bool[str.Length];
             for (int i = 0; i < str.Length; i++)
             {
                 if (str[i] == '1')
@@ -244,8 +307,30 @@ namespace SzyfratorStrumieniowy
         {
             registers.Clear();
             registersLengths.Clear();
+            int borderNumber = 0;
+            int randomNumber = -1;
+            while (true)
+            {
+                do
+                {
+                    if (borderNumber > int.MaxValue / 2)
+                        registersLengths.Clear();
+                    if (registersLengths.Count == howMuchRegisters)
+                        break;
+                    randomNumber = GenerateRandom(1, 15, maximumLengthOfRegister + 1)[0];
+                    borderNumber++;
+                } while (registersLengths.Contains(randomNumber) || !isFirstWithEveryItem(randomNumber, registersLengths));
+
+                if (registersLengths.Count == howMuchRegisters)
+                    break;
+                
+                registersLengths.Add(randomNumber);
+            }
+            registersLengths.Sort();
+            
+
             for (int i = 0; i < howMuchRegisters; i++)
-                registers.Add(CreateRegister());
+                registers.Add(CreateRegister(registersLengths.ElementAt(i)));
             registersBackup = CopyList(registers);
 
         }
@@ -257,7 +342,7 @@ namespace SzyfratorStrumieniowy
         {
             List<KeyValuePair<BitArray, BitArray>> temp = new List<KeyValuePair<BitArray, BitArray>>();
             for (int i = 0; i < list.Count(); i++)
-                temp.Add(new KeyValuePair<BitArray, BitArray>(list[i].Key, list[i].Value));
+                temp.Add(new KeyValuePair<BitArray, BitArray>(new BitArray(list[i].Key), new BitArray(list[i].Value)));
             return temp;
         }
 
@@ -266,13 +351,12 @@ namespace SzyfratorStrumieniowy
         #region Wygenerowanie klucza
         private async void GenerateKey()
         {
-            //String key = "";
-           
-                BitArray key = new BitArray(keyLength);
-                registers = CopyList(registersBackup);
-                int sum = 0;
-                int count = registers.Count;
-                int countDivided = count / 2;
+            BitArray key = new BitArray(keyLength);
+            registers = CopyList(registersBackup);
+            int sum = 0;
+            int count = registers.Count;
+            int countDivided = count / 2;
+            int keyLengthStopped = 0;
             sw.Reset();
             sw.Start();
             await Task.Run(() =>
@@ -290,18 +374,34 @@ namespace SzyfratorStrumieniowy
 
                     if (stop == true)
                     {
+                        keyLengthStopped = i;
                         break;
                     }
 
                 }
             });
-            keyBitArray = key;
-            keyGlobal = ToStringBitArray(key);
-            keyTextBox.Text = keyGlobal;
+            if (stop == true)
+            {
+                keyBitArray = new BitArray(keyLengthStopped);
+                CopyBitArray(key, keyBitArray);
+            }
+            else
+                keyBitArray = key;
+            keyGlobal = ToStringBitArray(keyBitArray);
             sw.Stop();
+            if (checkbox.IsChecked == true)
+                await Task.Run(() =>
+                {
+                    keyTextBox.Dispatcher.Invoke(
+                System.Windows.Threading.DispatcherPriority.Normal,
+               (ThreadStart)delegate
+               {
+                   keyTextBox.Text = keyGlobal;
+               });
+                });
 
-            counter.Text = keyGlobal.Count().ToString();
-            time.Text = sw.ElapsedMilliseconds / 60000 + "m " + sw.ElapsedMilliseconds / 1000 + "s " + sw.ElapsedMilliseconds%1000 + "ms";
+            counter.Text = keyLengthStopped.ToString();
+            time.Text = sw.Elapsed.Minutes + "m " + sw.Elapsed.Seconds + "s " + sw.Elapsed.Milliseconds+"ms";
             generateKeyBtn.IsEnabled = true;
             generateRegisters.IsEnabled = true;
             loadRegisters.IsEnabled = true;
@@ -310,6 +410,27 @@ namespace SzyfratorStrumieniowy
             stopKeyBtn.Visibility = Visibility.Hidden;
 
             stop = false;
+
+            //TEST
+            //var tested = ToBoolArray(keyGlobal);
+            //showAlert(TestSingleBit(ref tested).ToString());
+            //var dict = TestSeries(ref tested);
+            //var o = "";
+            //foreach (var h in dict.Keys)
+            //{
+            //    o =o+"\n"+ dict.Where(x => x.Key == h).Select(x => x.Key.ToString() + " " + x.Value.ToString()).ToList().Last().ToString();
+            //}
+            //showAlert(o);
+            //showAlert(dict.Keys.Max().ToString());
+            //showAlert(TestPoker(ref tested).ToString());
+        }
+
+        private void CopyBitArray(BitArray from, BitArray to)
+        {
+            for(int i = 0; i < to.Count; i++)
+            {
+                if (from.Get(i) == true) to.Set(i, true);
+            }
         }
 
         private String ToStringBitArray(BitArray key)
@@ -347,7 +468,14 @@ namespace SzyfratorStrumieniowy
             if (howMuchRegistersComboBox.Items.Count > 1)
             {
                 int howM = int.Parse(howMuchRegistersComboBox.SelectedItem.ToString().Last().ToString());
-                slValue.Minimum = howM + 2;
+                if (howM == 3)
+                    slValue.Minimum = 25;
+                else if (howM == 5)
+                    slValue.Minimum = 30;
+                else if (howM == 7)
+                    slValue.Minimum = 35;
+                else if (howM == 9)
+                    slValue.Minimum = 45;
             }
         }
 
@@ -485,7 +613,7 @@ namespace SzyfratorStrumieniowy
             String returnValue = "";
             foreach (var register in registers)
             {
-                returnValue += String.Concat(String.Concat(register.Key), ";", String.Concat(register.Value), Environment.NewLine);
+                returnValue += String.Concat(ToStringBitArray(register.Key), ";", ToStringBitArray(register.Value), Environment.NewLine);
             }
 
             Nullable<bool> result = dlg.ShowDialog();
@@ -531,8 +659,8 @@ namespace SzyfratorStrumieniowy
 
                     if (!x.Contains('1')) { x.Remove(0, 1); x += '1'; }
                     if (a == "" || a.Length != x.Length) aL = perfectPolynomians.Where(z => z.Key == x.Length).Select(y => y.Value).ToList()[0];
-                    else { if (!a.Last().Equals('1')) { a.Remove(a.Length - 1, 0); a += '1'; } aL = new BitArray(a.Select(y => Convert.ToBoolean(y)).ToArray()); }
-                    xL = new BitArray(x.Select(y => Convert.ToBoolean(y)).ToArray());
+                    else { if (!a.Last().Equals('1')) { a.Remove(a.Length - 1, 0); a += '1'; } aL = new BitArray(a.Select(y => ConvertToBoolean(y)).ToArray()); }
+                    xL = new BitArray(x.Select(y => ConvertToBoolean(y)).ToArray());
                     registers.Add(new KeyValuePair<BitArray,BitArray>(xL, aL));
 
                     validLines++;
@@ -696,7 +824,10 @@ namespace SzyfratorStrumieniowy
                 {
                     if (_regex.IsMatch(line))
                     {
-                        fileText += line+Environment.NewLine;
+                        if (line != lines.Last())
+                            fileText += line + Environment.NewLine;
+                        else
+                            fileText += line;
                     }
                     else
                     {
@@ -878,6 +1009,115 @@ namespace SzyfratorStrumieniowy
             loadedKey.Text = string.Concat(loadedKey.Text.Where(x => _regex.IsMatch(x.ToString())).Select(x => x));
         }
 
+        private void buttonSbs_Click(object sender, RoutedEventArgs e)
+        {
+            if (textSbs.Text != "" && textBinSbs.Text != "" && keySbs.Text != "")
+            {
+                BitArray text = ToBitArray(textBinSbs.Text);
+                Console.WriteLine(text.Length);
+                BitArray key = ToBitArray(keySbs.Text);
+                Console.WriteLine(key.Length);
+                if (text.Length == key.Length)
+                {
+                    BitArray xored = text.Xor(key);
+                    xorBinSbs.Text = ToStringBitArray(xored);
+                    xorSbs.Text = Encoding.ASCII.GetString(GetBytesFromBinaryString(ToStringBitArray(xored)));
+                }
+                else
+                {
+                    showAlert("Klucz i tekst jawny binarny muszą mieć taką samą długość!");
+                }
+
+            }
+            else
+                showAlert("Problem z którymś z pól.");
+        }
+
+        private void textSbs_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (textBinSbs!=null)
+            {
+                System.Text.RegularExpressions.Regex _regex = new System.Text.RegularExpressions.Regex(@"^[a-zA-Z0-9\\"" !@#$%^&*()_\-\+=\}\{\:\'\[\]\,\.\\\/\|<>]*$");
+                if (_regex.IsMatch(textSbs.Text))
+                {
+                    textBinSbs.Text = ToStringBitArray(GetBinaryStringFromString(textSbs.Text));
+                }
+                else
+                {
+                    textSbs.Text.Remove(textSbs.Text.Length - 1);
+                    showAlert("Tekst zawiera niedozwolone znaki.");
+                }
+            }
+        }
+
+        private void keySbs_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            System.Text.RegularExpressions.Regex _regex = new System.Text.RegularExpressions.Regex("[0-1]+$");
+            keySbs.Text = string.Concat(keySbs.Text.Where(x => _regex.IsMatch(x.ToString())).Select(x => x));
+        }
+
+        private void textBinSbs_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            System.Text.RegularExpressions.Regex _regex = new System.Text.RegularExpressions.Regex("[0-1]+$");
+            if (textSbs.Text != null)
+            {
+                textBinSbs.Text = string.Concat(textBinSbs.Text.Where(x => _regex.IsMatch(x.ToString())).Select(x => x));
+                if (textBinSbs.Text.Length % 8 == 0)
+                {
+                    textSbs.Text = Encoding.ASCII.GetString(GetBytesFromBinaryString(textBinSbs.Text));
+                }
+            }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            howMuchRegisters = 20;
+            maximumLengthOfRegister = 50;
+            keyLength = 1000000;
+
+            MakeRegisters();
+
+            BitArray key = new BitArray(keyLength);
+            registers = CopyList(registersBackup);
+            int sum = 0;
+            int count = registers.Count;
+            int countDivided = count / 2;
+                for (int i = 0; i < keyLength; i++)
+                {
+                    sum = 0;
+                    for (int j = 0; j < count; j++)
+                    {
+                        var temp = registers[j];
+                        sum += IterateOverRegister(ref temp);
+                        registers[j] = temp;
+                    }
+                    if (sum > countDivided)
+                    key.Set(i, true);
+
+                    if (stop == true)
+                    {
+                        break;
+                    }
+
+                }
+           
+            File.WriteAllText(Environment.CurrentDirectory + "kluczLosowy"+licznik.ToString()+".txt", ToStringBitArray(key));
+            licznik++;
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            if (keyTextBox.Text != keyGlobal)
+            {
+                keyTextBox.Text = keyGlobal;
+            }
+        }
+
+        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            keyTextBox.Text = "";
+        }
+
         private void cipherButton_Click(object sender, RoutedEventArgs e)
         {
             loadedKeyBit = ToBitArray(loadedKey.Text);
@@ -942,6 +1182,75 @@ namespace SzyfratorStrumieniowy
             }
             else
                 showAlert("Nie podano długości klucza!");
+        }
+
+        #endregion
+
+        #region Testy FIPS
+
+        private int TestSingleBit(ref bool[] tested)
+        {
+            return tested.Where(x => x).Count();
+        }
+
+        private IDictionary<int,int> TestSeries(ref bool[] tested)
+        {
+            IDictionary<int, int> keyValuePairs = new Dictionary<int, int>();
+            var previous = tested[0];
+            var series = 1;
+            for(int i = 1; i < tested.Count(); i++)
+            {
+                if (tested[i] == previous)
+                {
+                    series++;
+                    if (i == tested.Count() - 1) {
+                        if (!keyValuePairs.ContainsKey(series))
+                            keyValuePairs.Add(series, 1);
+                        else
+                            keyValuePairs[series] += 1;
+                    }
+                }
+                else
+                {
+                    if (!keyValuePairs.ContainsKey(series))
+                        keyValuePairs.Add(series, 1);
+                    else
+                        keyValuePairs[series] += 1;
+                    series = 1;
+                }
+                previous = tested[i];
+            }
+            return keyValuePairs;
+        }
+
+        private double TestPoker(ref bool[] tested)
+        {
+            if (tested.Count() % 4 == 0)
+            {
+                IDictionary<short, int> map = new Dictionary<short, int>();
+                for (short i = 0; i < 16; i++)
+                    map.Add(i, 0);
+
+                bool[] fourBits;
+                for (int i = 0; i < tested.Count(); i = i + 4)
+                {
+                    fourBits = new bool[4]{tested[i], tested[i+1],tested[i+2],tested[i+3]};
+                    map[binToDec(ref fourBits)]++;
+                }
+
+                return Math.Round((double)((16 / (tested.Count() / 4) )* map.Sum(x => x.Value * x.Value) - (tested.Count() / 4)),2);
+            }
+            else
+                return -1;
+        }
+        private short binToDec(ref bool[] bin)
+        {
+            short dec = 0;
+            if (bin[0] == true) dec += 8;
+            if (bin[1] == true) dec += 4;
+            if (bin[2] == true) dec += 2;
+            if (bin[3] == true) dec += 1;
+            return dec;
         }
 
         #endregion
