@@ -579,8 +579,8 @@ namespace SzyfratorStrumieniowy
         {
             Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog
             {
-                DefaultExt = ".bin",
-                Filter = "Pliki binarne (.bin)|.bin|Pliki tekstowe (.txt)|*.txt"
+                DefaultExt = ".txt",
+                Filter = "Pliki tekstowe (.txt)|*.txt|Pliki binarne (.bin)|.bin"
             };
 
             Nullable<bool> result = dlg.ShowDialog();
@@ -615,7 +615,6 @@ namespace SzyfratorStrumieniowy
             {
                 returnValue += String.Concat(ToStringBitArray(register.Key), ";", ToStringBitArray(register.Value), Environment.NewLine);
             }
-
             Nullable<bool> result = dlg.ShowDialog();
             if (result == true && returnValue != "")
                 File.WriteAllText(dlg.FileName, returnValue, Encoding.GetEncoding("Windows-1250"));
@@ -816,7 +815,7 @@ namespace SzyfratorStrumieniowy
             Nullable<bool> result = dlg.ShowDialog();
             if (result == true)
             {
-                System.Text.RegularExpressions.Regex _regex = new System.Text.RegularExpressions.Regex(@"^[a-zA-Z0-9\\"" !@#$%^&*()_\-\+=\}\{\:\'\[\]\,\.\\\/\|<>]+$");
+                System.Text.RegularExpressions.Regex _regex = new System.Text.RegularExpressions.Regex(@"^[a-zA-Z0-9\\"" !@#$%^&*()_\-\+=\}\{\:\'\[\]\,\.\\\/\|<>]*$");
                 
                 var lines = File.ReadAllLines(dlg.FileName, Encoding.GetEncoding("Windows-1250"));
                 String fileText = "";
@@ -923,7 +922,6 @@ namespace SzyfratorStrumieniowy
                     {
                         bytes[i] = Convert.ToByte(toCipherBitsChars.Substring(8 * i, 8), 2);
                     }
-                    //toCipherBits.CopyTo(bytes, 0);
                     File.WriteAllBytes(dlg.FileName, bytes);
                 }
                 else
@@ -1069,42 +1067,6 @@ namespace SzyfratorStrumieniowy
             }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            howMuchRegisters = 20;
-            maximumLengthOfRegister = 50;
-            keyLength = 1000000;
-
-            MakeRegisters();
-
-            BitArray key = new BitArray(keyLength);
-            registers = CopyList(registersBackup);
-            int sum = 0;
-            int count = registers.Count;
-            int countDivided = count / 2;
-                for (int i = 0; i < keyLength; i++)
-                {
-                    sum = 0;
-                    for (int j = 0; j < count; j++)
-                    {
-                        var temp = registers[j];
-                        sum += IterateOverRegister(ref temp);
-                        registers[j] = temp;
-                    }
-                    if (sum > countDivided)
-                    key.Set(i, true);
-
-                    if (stop == true)
-                    {
-                        break;
-                    }
-
-                }
-           
-            File.WriteAllText(Environment.CurrentDirectory + "kluczLosowy"+licznik.ToString()+".txt", ToStringBitArray(key));
-            licznik++;
-        }
-
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             if (keyTextBox.Text != keyGlobal)
@@ -1193,9 +1155,15 @@ namespace SzyfratorStrumieniowy
             return tested.Where(x => x).Count();
         }
 
-        private IDictionary<int,int> TestSeries(ref bool[] tested)
+        private List<IDictionary<int,int>> TestSeries(ref bool[] tested)
         {
-            IDictionary<int, int> keyValuePairs = new Dictionary<int, int>();
+            IDictionary<int, int> keyValuePairs1 = new Dictionary<int, int>();
+            IDictionary<int, int> keyValuePairs0 = new Dictionary<int, int>();
+            for(int i = 1; i < 26;i++)
+            {
+                keyValuePairs1.Add(i, 0);
+                keyValuePairs0.Add(i, 0);
+            }
             var previous = tested[0];
             var series = 1;
             for(int i = 1; i < tested.Count(); i++)
@@ -1203,24 +1171,272 @@ namespace SzyfratorStrumieniowy
                 if (tested[i] == previous)
                 {
                     series++;
-                    if (i == tested.Count() - 1) {
-                        if (!keyValuePairs.ContainsKey(series))
-                            keyValuePairs.Add(series, 1);
-                        else
-                            keyValuePairs[series] += 1;
-                    }
                 }
                 else
                 {
-                    if (!keyValuePairs.ContainsKey(series))
-                        keyValuePairs.Add(series, 1);
+                    if (previous)
+                    {
+                        if (!keyValuePairs1.ContainsKey(series))
+                            keyValuePairs1.Add(series, 1);
+                        else
+                            keyValuePairs1[series] += 1;
+                    }
                     else
-                        keyValuePairs[series] += 1;
+                    {
+                        if (!keyValuePairs0.ContainsKey(series))
+                            keyValuePairs0.Add(series, 1);
+                        else
+                            keyValuePairs0[series] += 1;
+                    }
                     series = 1;
+                }
+                if (i == tested.Count() - 1)
+                {
+                    if (tested[i])
+                    {
+                        if (!keyValuePairs1.ContainsKey(series))
+                            keyValuePairs1.Add(series, 1);
+                        else
+                            keyValuePairs1[series] += 1;
+                    }
+                    else
+                    {
+                        if (!keyValuePairs0.ContainsKey(series))
+                            keyValuePairs0.Add(series, 1);
+                        else
+                            keyValuePairs0[series] += 1;
+                    }
                 }
                 previous = tested[i];
             }
-            return keyValuePairs;
+
+            return new List<IDictionary<int, int>>(2) { keyValuePairs0, keyValuePairs1 };
+        }
+
+        private void loadTestFile_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog
+            {
+                DefaultExt = ".txt",
+                Filter = "Pliki tekstowe (.txt)|*.txt|Pliki binarne (.bin)|*.bin"
+            };
+            Nullable<bool> result = dlg.ShowDialog();
+            if (result == true)
+            {
+                String testReturn = "Damian Szkudlarek 2018"+Environment.NewLine+dlg.FileName+Environment.NewLine + Environment.NewLine;
+                System.Text.RegularExpressions.Regex _regex = new System.Text.RegularExpressions.Regex("[0-1]+$");
+                var key = File.ReadAllText(dlg.FileName, Encoding.GetEncoding("Windows-1250"));
+                if (key.Length < 20000)
+                {
+                    showAlert("Za krótki ciąg. Ciąg musi mieć przynajmniej 20000 znaków.");
+                    return;
+                }
+                if (_regex.IsMatch(key))
+                {
+                    if (key.Length > 20000) {
+                        key = key.Substring(0, 20000);
+                    }
+                    var tested = ToBoolArray(key);
+                    int singleBits = TestSingleBit(ref tested);
+                    var list = TestSeries(ref tested);
+                    var map = list.ElementAt(1);
+                    var map0 = list.ElementAt(0);
+                    double poker = TestPoker(ref tested);
+                    int sum = map.Where(x => x.Key > 5).Sum(x => x.Value);
+                    int sum0 = map0.Where(x => x.Key > 5).Sum(x => x.Value);
+
+                    testReturn += "Test pojedynczych bitów: ";
+
+                    TestSingleBitsText.Text = singleBits.ToString();
+                    if (singleBits > 9725 && singleBits < 10275)
+                    {
+                        TestSingleBitsBorder.BorderBrush = Brushes.ForestGreen;
+                        testReturn += " zdany";
+                    }
+                    else
+                    {
+                        TestSingleBitsBorder.BorderBrush = Brushes.IndianRed;
+                        testReturn += " niezdany";
+                    }
+                    testReturn += Environment.NewLine + "\t(" + singleBits.ToString()+ ")";
+                    testReturn += Environment.NewLine + "Test serii: ";
+                    bool seriesB = true;
+                    TestSeriesText1.Text = map[1].ToString();
+                    if (map[1] >= 2315 && map[1] <= 2685)
+                    {
+                        TestSeriesBorder1.BorderBrush = Brushes.ForestGreen;
+                    }
+                    else
+                    {
+                        TestSeriesBorder1.BorderBrush = Brushes.IndianRed;
+                        seriesB = false;
+                    }
+
+                    TestSeriesText2.Text = map[2].ToString();
+                    if (map[2] >= 1114 && map[2] <= 1386)
+                    {
+                        TestSeriesBorder2.BorderBrush = Brushes.ForestGreen;
+                    }
+                    else
+                    {
+                        TestSeriesBorder2.BorderBrush = Brushes.IndianRed;
+                        seriesB = false;
+                    }
+
+                    TestSeriesText3.Text = map[3].ToString();
+                    if (map[3] >= 527 && map[3] <= 723)
+                    {
+                        TestSeriesBorder3.BorderBrush = Brushes.ForestGreen;
+                    }
+                    else
+                    {
+                        TestSeriesBorder3.BorderBrush = Brushes.IndianRed;
+                        seriesB = false;
+                    }
+
+                    TestSeriesText4.Text = map[4].ToString();
+                    if (map[4] >= 240 && map[4] <= 384)
+                    {
+                        TestSeriesBorder4.BorderBrush = Brushes.ForestGreen;
+                    }
+                    else
+                    {
+                        TestSeriesBorder4.BorderBrush = Brushes.IndianRed;
+                        seriesB = false;
+                    }
+                    TestSeriesText5.Text = map[5].ToString();
+                    if (map[5] >= 103 && map[5] <= 209)
+                    {
+                        TestSeriesBorder5.BorderBrush = Brushes.ForestGreen;
+                    }
+                    else
+                    {
+                        TestSeriesBorder5.BorderBrush = Brushes.IndianRed;
+                        seriesB = false;
+                    }
+
+                    TestSeriesText6.Text = sum.ToString();
+                    if (sum >= 103 && sum <= 209)
+                    {
+                        TestSeriesBorder6.BorderBrush = Brushes.ForestGreen;
+                    }
+                    else
+                    {
+                        TestSeriesBorder6.BorderBrush = Brushes.IndianRed;
+                        seriesB = false;
+                    }
+
+
+
+                    TestSeriesText10.Text = map0[1].ToString();
+                    if (map0[1] >= 2315 && map0[1] <= 2685)
+                    {
+                        TestSeriesBorder10.BorderBrush = Brushes.ForestGreen;
+                    }
+                    else
+                    {
+                        TestSeriesBorder10.BorderBrush = Brushes.IndianRed;
+                        seriesB = false;
+                    }
+
+                    TestSeriesText20.Text = map0[2].ToString();
+                    if (map0[2] >= 1114 && map0[2] <= 1386)
+                    {
+                        TestSeriesBorder20.BorderBrush = Brushes.ForestGreen;
+                    }
+                    else
+                    {
+                        TestSeriesBorder20.BorderBrush = Brushes.IndianRed;
+                        seriesB = false;
+                    }
+
+                    TestSeriesText30.Text = map0[3].ToString();
+                    if (map0[3] >= 527 && map0[3] <= 723)
+                    {
+                        TestSeriesBorder30.BorderBrush = Brushes.ForestGreen;
+                    }
+                    else
+                    {
+                        TestSeriesBorder30.BorderBrush = Brushes.IndianRed;
+                        seriesB = false;
+                    }
+
+                    TestSeriesText40.Text = map0[4].ToString();
+                    if (map0[4] >= 240 && map0[4] <= 384)
+                    {
+                        TestSeriesBorder40.BorderBrush = Brushes.ForestGreen;
+                    }
+                    else
+                    {
+                        TestSeriesBorder40.BorderBrush = Brushes.IndianRed;
+                        seriesB = false;
+                    }
+                    TestSeriesText50.Text = map0[5].ToString();
+                    if (map0[5] >= 103 && map0[5] <= 209)
+                    {
+                        TestSeriesBorder50.BorderBrush = Brushes.ForestGreen;
+                    }
+                    else
+                    {
+                        TestSeriesBorder50.BorderBrush = Brushes.IndianRed;
+                        seriesB = false;
+                    }
+
+                    TestSeriesText60.Text = sum0.ToString();
+                    if (sum0 >= 103 && sum0 <= 209)
+                    {
+                        TestSeriesBorder60.BorderBrush = Brushes.ForestGreen;
+                    }
+                    else
+                    {
+                        TestSeriesBorder60.BorderBrush = Brushes.IndianRed;
+                        seriesB = false;
+                    }
+
+                    if (seriesB) testReturn += " zdany";
+                    else testReturn += " niezdany";
+                    testReturn += Environment.NewLine+"\t1:(" +"1: ["+ map[1].ToString() + "]; " + "2: [" + map[2].ToString() + "]; " + "3: [" + map[3].ToString() + "]; " + "4: [" + map[4].ToString() + "]; "+ "5: [" + map[5].ToString() + "]; " + ">=6: [" + sum.ToString() + "]) ";
+                    testReturn += Environment.NewLine + "\t0:(" + "1: ["+ map0[1].ToString() + "]; " + "2: [" + map0[2].ToString() + "]; " + "3: [" + map0[3].ToString() + "]; " + "4: [" + map0[4].ToString() + "]; " + "5: [" + map0[5].ToString() + "]; " + ">=6: [" + sum0.ToString() + "]) ";
+                    testReturn += Environment.NewLine + "Test najdłuższej serii: ";
+                    var keys = map.Where(x => x.Value > 0).Select(x => x.Key);
+                    var keys0 = map0.Where(x => x.Value > 0).Select(x => x.Key);
+                    var max = keys0.Max();
+                    if (keys.Max() > keys0.Max()) max = keys.Max();
+                    TestLongSeriesText.Text =max.ToString();
+                    if (max < 26)
+                    {
+                        TestLongSeriesBorder.BorderBrush = Brushes.ForestGreen;
+                        testReturn += " zdany";
+                    }
+                    else
+                    {
+                        TestLongSeriesBorder.BorderBrush = Brushes.IndianRed;
+                        testReturn += " niezdany";
+                    }
+                    testReturn += Environment.NewLine + "\t(" + max.ToString() + ")";
+                    testReturn += Environment.NewLine + "Test pokerowy: ";
+
+                    TestPokerText.Text = poker.ToString();
+                    if (poker > 2.16 && poker < 46.17)
+                    {
+                        TestPokerBorder.BorderBrush = Brushes.ForestGreen;
+                        testReturn += " zdany";
+                    }
+                    else
+                    {
+                        TestPokerBorder.BorderBrush = Brushes.IndianRed;
+                        testReturn += " niezdany";
+                    }
+                    testReturn += Environment.NewLine + "\t(" + poker.ToString() + ")";
+                    File.WriteAllText(Environment.CurrentDirectory + "/result" + Path.GetFileName(dlg.FileName), testReturn, Encoding.GetEncoding("Windows-1250"));
+                    showAlert("Plik z wynikami testu został zapisany jako: " + (Environment.CurrentDirectory + "/result"+ Path.GetFileName(dlg.FileName)));
+
+                }
+                else
+                    showAlert("Załadowano niepoprawny plik.\nPlik musi zawierać ciąg binarny o długości 20 tysięcy");
+            }
+            else
+                showAlert("Błąd przy otwieraniu pliku.");
         }
 
         private double TestPoker(ref bool[] tested)
@@ -1237,8 +1453,9 @@ namespace SzyfratorStrumieniowy
                     fourBits = new bool[4]{tested[i], tested[i+1],tested[i+2],tested[i+3]};
                     map[binToDec(ref fourBits)]++;
                 }
-
-                return Math.Round((double)((16 / (tested.Count() / 4) )* map.Sum(x => x.Value * x.Value) - (tested.Count() / 4)),2);
+                double len = (tested.Count() / 4);
+                var sum = map.Sum(x => x.Value * x.Value);
+                return Math.Round(((16 / len) *  sum) - len,2);
             }
             else
                 return -1;

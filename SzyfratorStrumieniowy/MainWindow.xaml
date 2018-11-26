@@ -8,174 +8,337 @@
         Title="Szyfrator strumieniowy" Height="700" Width="1000"
         ResizeMode="CanMinimize"
         WindowStartupLocation="CenterScreen">
-    <TabControl x:Name="tabControl" Background="#21232C">
-        <TabItem Header="Szyfrator strumieniowy">
-            <Grid Background="#21232C">
-                <StackPanel Background="MistyRose" ScrollViewer.HorizontalScrollBarVisibility="Disabled" MinHeight="523" ScrollViewer.VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="968" Height="623">
-                    <TextBlock x:Name="cipherTitle" Margin="15,10,15,0"  TextWrapping="Wrap" VerticalAlignment="Top" FontSize="24" FontFamily="Helvetica" FontWeight="Light" Width="Auto" TextAlignment="Center" Text="Szyfrator strumieniowy"/>
-                    <Border BorderBrush="Black" BorderThickness="0,1,0,0" Margin="15,8" />
-                    <WrapPanel Margin="10 5">
-                        <StackPanel Width="454" Margin="10" HorizontalAlignment="Left">
-                            <Label>Tekst jawny</Label>
-                            <Button x:Name="loadFile" Click="loadFile_Click"  Background="AliceBlue" Height="32" Content="Wczytaj plik z tekstem jawnym"/>
-                            <TextBox x:Name="textToBeCiphered" MaxHeight="150" MinHeight="150" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" Background="#21232C" Foreground="#E4DFDA" Padding="6" Margin="0,10, 0,5" TextWrapping="Wrap" FontSize="12" Text="" />
-                        </StackPanel>
-                        <StackPanel Width="454" Margin="10" HorizontalAlignment="Left">
-                            <Label Content="Klucz"/>
-                            <Button x:Name="loadKey" Click="loadKey_Click"  Background="AliceBlue" Height="32" Content="Wczytaj plik z kluczem"/>
-                            <TextBox x:Name="loadedKey" MaxHeight="150" MinHeight="150" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" Background="#21232C" Foreground="#E4DFDA" Padding="6" Margin="0,10,0,5" TextWrapping="Wrap" FontSize="12" Text="" TextChanged="loadedKey_TextChanged" />
-                        </StackPanel>
+    <Grid>
+        <UniformGrid Columns="6" Margin="5,0">
+            <FrameworkElement x:Name="c1"/>
+        </UniformGrid>
+        <TabControl x:Name="tabControl" Background="#21232C">
 
-                    </WrapPanel>
+            <TabItem Header="Szyfrator strumieniowy" Width="{Binding ElementName=c1, Path=ActualWidth}">
+                <Grid Background="#21232C">
+                    <StackPanel Background="MistyRose" ScrollViewer.HorizontalScrollBarVisibility="Disabled" MinHeight="523" ScrollViewer.VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" Margin="10" VerticalAlignment="Top" Width="968" Height="623">
+                        <TextBlock x:Name="cipherTitle" Margin="15,10,15,0"  TextWrapping="Wrap" VerticalAlignment="Top" FontSize="24" FontFamily="Helvetica" FontWeight="Light" Width="Auto" TextAlignment="Center" Text="Szyfrator strumieniowy"/>
+                        <Border BorderBrush="Black" BorderThickness="0,1,0,0" Margin="15,8" />
+                        <WrapPanel Margin="10 5">
+                            <StackPanel Width="454" Margin="10" HorizontalAlignment="Left">
+                                <Label>Tekst jawny</Label>
+                                <Button x:Name="loadFile" Click="loadFile_Click"  Background="AliceBlue" Height="32" Content="Wczytaj plik z tekstem jawnym"/>
+                                <TextBox x:Name="textToBeCiphered" MaxHeight="150" MinHeight="150" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" Background="#21232C" Foreground="#E4DFDA" Padding="6" Margin="0,10, 0,5" TextWrapping="Wrap" FontSize="12" Text="" />
+                            </StackPanel>
+                            <StackPanel Width="454" Margin="10" HorizontalAlignment="Left">
+                                <Label Content="Klucz"/>
+                                <Button x:Name="loadKey" Click="loadKey_Click"  Background="AliceBlue" Height="32" Content="Wczytaj plik z kluczem"/>
+                                <TextBox x:Name="loadedKey" MaxHeight="150" MinHeight="150" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" Background="#21232C" Foreground="#E4DFDA" Padding="6" Margin="0,10,0,5" TextWrapping="Wrap" FontSize="12" Text="" TextChanged="loadedKey_TextChanged" />
+                            </StackPanel>
 
-                    <WrapPanel x:Name="cipheredWrapPanel" Margin="10 5">
-                        <StackPanel Width="928" Margin="10">
-                            <WrapPanel>
-                                <Button x:Name="cipherButton" Visibility="Visible" Width="154.4" Click="cipherButton_Click" Background="Moccasin"  Margin="0,0,10,10" Height="32" Content="Szyfruj (ASCII)"/>
-                                <Button x:Name="decipherButton" Visibility="Visible" Width="154.4" Click="decipherButton_Click" Background="#ffeccb" Margin="0,0,10,10" Height="32" Content="Deszfyruj (BIN)"/>
-                                <Button x:Name="changeView" Visibility="Visible" Width="154.4" Click="changeView_Click" Background="#fff4e1" Margin="0,0,10,10" Height="32" Content="Zmień widok (ASCII/BIN)"/>
-                            </WrapPanel>
-                            <TextBox x:Name="cipheredText" MaxHeight="140" MinHeight="160" VerticalScrollBarVisibility="Auto" IsReadOnly="True" AcceptsReturn="True" Background="#21232C" Foreground="#E4DFDA" Padding="6" Margin="0,5,1,5" TextWrapping="Wrap" FontSize="12" Text="" />
-                            <WrapPanel>
-                                <Button x:Name="saveTextASCII" Visibility="Visible" Width="154.4" Click="saveTextASCII_Click" Background="LightSkyBlue" Margin="0,10,10,5" Height="32" Content="Zapisz jako ASCII"/>
-                                <Button x:Name="saveTextBinary" Visibility="Visible" Width="154.4" Click="saveTextBinary_Click" Background="PowderBlue" Margin="0,10,10,5" Height="32" Content="Zapisz binarnie"/>
-                                <Button x:Name="saveTextAsBin" Visibility="Visible" Width="154.4" Click="saveTextAsBin_Click" Background="AliceBlue" Margin="0,10,10,5" Height="32" Content="Zapisz jako .bin"/>
-                            </WrapPanel>
-                        </StackPanel>
-                    </WrapPanel>
-                </StackPanel>
-            </Grid>
-        </TabItem>
-        <TabItem Header="Krok po kroku - Szyfrator">
-            <ScrollViewer ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
-                <StackPanel x:Name="cipherStepbystepStackPanel" >
-                    <StackPanel  Margin="70 20">
-                        <TextBlock FontSize="14" Foreground="AntiqueWhite" Text="Wprowadź tekst jawny i klucz."/>
-                        <Grid Height="210">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="22*"/>
-                                <ColumnDefinition Width="75*"/>
-                                <ColumnDefinition Width="162*"/>
-                                <ColumnDefinition Width="65*"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="1*" />
-                                <RowDefinition Height="1*" />
-                                <RowDefinition Height="1*" />
-                                <RowDefinition Height="1*" />
-                                <RowDefinition Height="1*" />
-                                <RowDefinition Height="1*" />
-                            </Grid.RowDefinitions>
-                            <Label Foreground="White" Grid.Row="0" FontSize="12" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Grid.ColumnSpan="2">Tekst jawny</Label>
-                            <Label Foreground="White" Grid.Row="1" FontSize="12" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Grid.ColumnSpan="2">Postać binarna tekstu</Label>
-                            <Label Foreground="White" Grid.Row="2" FontSize="12" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Grid.ColumnSpan="2">Klucz</Label>
-                            <Label Foreground="White" Grid.Row="3" FontSize="12" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Grid.ColumnSpan="2">Zaszyfrowany tekst binarnie</Label>
-                            <Label Foreground="White" Grid.Row="4" FontSize="12" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Grid.ColumnSpan="2">Zaszyfrowany tekst</Label>
-                            <TextBox x:Name="textSbs" Grid.Column="2" Grid.Row="0" TextChanged="textSbs_TextChanged" Text="" Margin="10 5 10 5" MaxLength="5"  Height="Auto"  MinHeight="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
-                            <TextBox x:Name="textBinSbs"  Grid.Column="2" Grid.Row="1" Text="" Margin="10 5 10 5"  MaxLength="40"  Height="Auto"  MinHeight="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="textBinSbs_TextChanged"></TextBox>
-                            <TextBox x:Name="keySbs" Grid.Column="2" Grid.Row="2" Text="0000111100001101010000110000111000000100" Margin="10 5 10 5"  MaxLength="40"  Height="Auto"  MinHeight="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="keySbs_TextChanged"></TextBox>
-                            <TextBox IsReadOnly="True" x:Name="xorBinSbs" Grid.Column="2" Grid.Row="3" Text="" Margin="10 5 10 5"  MaxLength="40"  Height="Auto"  MinHeight="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
-                            <TextBox IsReadOnly="True"  x:Name="xorSbs" Grid.Column="2" Grid.Row="4" Text="" Margin="10 5 10 5"  MaxLength="5"  Height="Auto"  MinHeight="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
-                            <Button x:Name="buttonSbs" Grid.Column="2" Grid.Row="5" Margin="10 0" Content="Szyfruj / Deszyfruj" Height="35" Click="buttonSbs_Click"/>
-                        </Grid>
+                        </WrapPanel>
+
+                        <WrapPanel x:Name="cipheredWrapPanel" Margin="10 5">
+                            <StackPanel Width="928" Margin="10">
+                                <WrapPanel>
+                                    <Button x:Name="cipherButton" Visibility="Visible" Width="154.4" Click="cipherButton_Click" Background="Moccasin"  Margin="0,0,10,10" Height="32" Content="Szyfruj (ASCII)"/>
+                                    <Button x:Name="decipherButton" Visibility="Visible" Width="154.4" Click="decipherButton_Click" Background="#ffeccb" Margin="0,0,10,10" Height="32" Content="Deszfyruj (BIN)"/>
+                                    <Button x:Name="changeView" Visibility="Visible" Width="154.4" Click="changeView_Click" Background="#fff4e1" Margin="0,0,10,10" Height="32" Content="Zmień widok (ASCII/BIN)"/>
+                                </WrapPanel>
+                                <TextBox x:Name="cipheredText" MaxHeight="140" MinHeight="160" VerticalScrollBarVisibility="Auto" IsReadOnly="True" AcceptsReturn="True" Background="#21232C" Foreground="#E4DFDA" Padding="6" Margin="0,5,1,5" TextWrapping="Wrap" FontSize="12" Text="" />
+                                <WrapPanel>
+                                    <Button x:Name="saveTextASCII" Visibility="Visible" Width="154.4" Click="saveTextASCII_Click" Background="LightSkyBlue" Margin="0,10,10,5" Height="32" Content="Zapisz jako ASCII"/>
+                                    <Button x:Name="saveTextBinary" Visibility="Visible" Width="154.4" Click="saveTextBinary_Click" Background="PowderBlue" Margin="0,10,10,5" Height="32" Content="Zapisz binarnie"/>
+                                    <Button x:Name="saveTextAsBin" Visibility="Visible" Width="154.4" Click="saveTextAsBin_Click" Background="AliceBlue" Margin="0,10,10,5" Height="32" Content="Zapisz jako .bin"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </WrapPanel>
                     </StackPanel>
-                </StackPanel>
-            </ScrollViewer>
-        </TabItem>
-        <TabItem Header="Generator Progowy">
-            <Grid Background="#21232C" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
-                <StackPanel Background="MistyRose" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" MinHeight="523" Margin="10,10,10,10" VerticalAlignment="Top" Width="968" Height="623">
+                </Grid>
+            </TabItem>
+            <TabItem Header="Generator Progowy" Width="{Binding ElementName=c1, Path=ActualWidth}">
+                <Grid Background="#21232C" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="183*"/>
+                        <ColumnDefinition Width="311*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Background="MistyRose" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" MinHeight="523" Margin="10" VerticalAlignment="Top" Width="968" Height="623" Grid.ColumnSpan="2">
 
-                    <TextBlock Margin="15,10,15,0"  TextWrapping="Wrap" VerticalAlignment="Top" FontSize="24" FontFamily="Helvetica" FontWeight="Light" Width="196" Text="Generator Progowy"/>
-                    <Border BorderBrush="Black" BorderThickness="0,1,0,0" Margin="15,8" />
-                    <!--<Button Height="50" Width="200" Background="Cornsilk" Click="Button_Click">GENERUJ Z C#</Button>-->
-                    <WrapPanel>
-                        <StackPanel Width="464" Margin="10" HorizontalAlignment="Left">
-                            <WrapPanel Margin="10 5">
-                                <TextBlock FontSize="14" FontWeight="DemiBold" Foreground="Black" Text="Ile rejestrów wygenerować?" />
-                                <ComboBox Background="Azure" x:Name="howMuchRegistersComboBox" Margin="30 0" FontSize="12" Width="40" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" SelectionChanged="howMuchRegistersComboBox_SelectionChanged">
-                                    <ComboBoxItem Background="Linen" IsSelected="True">3</ComboBoxItem>
-                                    <ComboBoxItem Background="Azure">5</ComboBoxItem>
-                                    <ComboBoxItem Background="Lavender">7</ComboBoxItem>
-                                    <ComboBoxItem Background="LemonChiffon">9</ComboBoxItem>
-                                </ComboBox>
-                            </WrapPanel>
-                            <DockPanel Margin="10 5">
-                                <TextBlock FontSize="14" FontWeight="DemiBold" Foreground="Black" Text="Maksymalna długość rejestru: " />
-                                <TextBox  x:Name="maximumLengthOfRegisterTextBox" TextChanged="maximumLengthOfRegisterTextBox_TextChanged" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="{Binding ElementName=slValue, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right"  Width="40" PreviewTextInput="maximumLengthOfRegisterTextBox_PreviewTextInput" />
-                                <Slider Minimum="25" Maximum="65" Margin="5 0"  TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" Name="slValue" />
-                            </DockPanel>
-                            <WrapPanel Margin="10 5">
-                                <TextBlock FontSize="14" FontWeight="DemiBold" Foreground="Black" Text="Rodzaj wielomianów: " />
-                                <RadioButton  Margin="5 3 10 0"  x:Name="randomPolynomiansRadioButton" IsChecked="True" Content="Losowe"/>
-                                <RadioButton  Margin="5 3 10 0" x:Name="perfectPolynomiansRadioButton"  Content="Pierwotne" />
-                            </WrapPanel>
-                            <WrapPanel Margin="10 0">
-                                <Button Width="182.5" x:Name="generateRegisters" Click="generateRegisters_Click"  Background="Azure" Margin="0,0,5,0" Height="32" Content="Generuj rejestry"/>
-                                <Button Width="182.5" x:Name="loadRegisters" Click="loadRegisters_Click"  Background="AliceBlue" Height="32" Content="Wczytaj rejestry"/>
-                            </WrapPanel>
-                            <ScrollViewer  Margin="0 10 0 10" MaxHeight="250" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                                <StackPanel x:Name="generatedRegistersStackPanel"></StackPanel>
-                            </ScrollViewer>
-                            <WrapPanel Margin="10 10" x:Name="keyLengthWrapPanel" Visibility="Collapsed">
-                                <TextBlock FontSize="14" FontWeight="DemiBold" Foreground="Black" Text="Jak długi klucz wygenerować?" />
-                                <TextBox  x:Name="keyLengthTextBox" MaxLength="8" Margin="10, 0, 0, 10" PreviewTextInput="keyLengthTextBox_PreviewTextInput" TextChanged="keyLengthTextBox_TextChanged" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="20000"  Width="150" />
-                            </WrapPanel>
-                            <Button x:Name="generateKeyBtn" Width="182.5" HorizontalAlignment="Center" Visibility="Collapsed" Click="generateKeyBtn_Click"  Background="LemonChiffon" Margin="10,5" Height="32" Content="Generuj klucz"/>
-                            <Button x:Name="stopKeyBtn" Width="182.5" HorizontalAlignment="Center" Visibility="Collapsed" Click="stopKeyBtn_Click"  Background="IndianRed" Margin="10,5" Height="32" Content="STOP"/>
+                        <TextBlock Margin="15,10,15,0"  TextWrapping="Wrap" VerticalAlignment="Top" FontSize="24" FontFamily="Helvetica" FontWeight="Light" Width="196" Text="Generator Progowy"/>
+                        <Border BorderBrush="Black" BorderThickness="0,1,0,0" Margin="15,8" />
+                        <WrapPanel>
+                            <StackPanel Width="464" Margin="10" HorizontalAlignment="Left">
+                                <WrapPanel Margin="10 5">
+                                    <TextBlock FontSize="14" FontWeight="DemiBold" Foreground="Black" Text="Ile rejestrów wygenerować?" />
+                                    <ComboBox Background="Azure" x:Name="howMuchRegistersComboBox" Margin="30 0" FontSize="12" Width="40" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" SelectionChanged="howMuchRegistersComboBox_SelectionChanged">
+                                        <ComboBoxItem Background="Linen" IsSelected="True">3</ComboBoxItem>
+                                        <ComboBoxItem Background="Azure">5</ComboBoxItem>
+                                        <ComboBoxItem Background="Lavender">7</ComboBoxItem>
+                                        <ComboBoxItem Background="LemonChiffon">9</ComboBoxItem>
+                                    </ComboBox>
+                                </WrapPanel>
+                                <DockPanel Margin="10 5">
+                                    <TextBlock FontSize="14" FontWeight="DemiBold" Foreground="Black" Text="Maksymalna długość rejestru: " />
+                                    <TextBox  x:Name="maximumLengthOfRegisterTextBox" TextChanged="maximumLengthOfRegisterTextBox_TextChanged" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="{Binding ElementName=slValue, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right"  Width="40" PreviewTextInput="maximumLengthOfRegisterTextBox_PreviewTextInput" />
+                                    <Slider Minimum="25" Maximum="65" Margin="5 0"  TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" Name="slValue" />
+                                </DockPanel>
+                                <WrapPanel Margin="10 5">
+                                    <TextBlock FontSize="14" FontWeight="DemiBold" Foreground="Black" Text="Rodzaj wielomianów: " />
+                                    <RadioButton  Margin="5 3 10 0"  x:Name="randomPolynomiansRadioButton" IsChecked="True" Content="Losowe"/>
+                                    <RadioButton  Margin="5 3 10 0" x:Name="perfectPolynomiansRadioButton"  Content="Pierwotne" />
+                                </WrapPanel>
+                                <WrapPanel Margin="10 0">
+                                    <Button Width="182.5" x:Name="generateRegisters" Click="generateRegisters_Click"  Background="Azure" Margin="0,0,5,0" Height="32" Content="Generuj rejestry"/>
+                                    <Button Width="182.5" x:Name="loadRegisters" Click="loadRegisters_Click"  Background="AliceBlue" Height="32" Content="Wczytaj rejestry"/>
+                                </WrapPanel>
+                                <ScrollViewer  Margin="0 10 0 10" MaxHeight="250" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                                    <StackPanel x:Name="generatedRegistersStackPanel"></StackPanel>
+                                </ScrollViewer>
+                                <WrapPanel Margin="10 10" x:Name="keyLengthWrapPanel" Visibility="Collapsed">
+                                    <TextBlock FontSize="14" FontWeight="DemiBold" Foreground="Black" Text="Jak długi klucz wygenerować?" />
+                                    <TextBox  x:Name="keyLengthTextBox" MaxLength="8" Margin="10, 0, 0, 10" PreviewTextInput="keyLengthTextBox_PreviewTextInput" TextChanged="keyLengthTextBox_TextChanged" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="20000"  Width="150" />
+                                </WrapPanel>
+                                <Button x:Name="generateKeyBtn" Width="182.5" HorizontalAlignment="Center" Visibility="Collapsed" Click="generateKeyBtn_Click"  Background="LemonChiffon" Margin="10,5" Height="32" Content="Generuj klucz"/>
+                                <Button x:Name="stopKeyBtn" Width="182.5" HorizontalAlignment="Center" Visibility="Collapsed" Click="stopKeyBtn_Click"  Background="IndianRed" Margin="10,5" Height="32" Content="STOP"/>
 
-                        </StackPanel>
-                        <StackPanel Width="464" Margin="10 10 0 10" HorizontalAlignment="Right">
-                            <WrapPanel Margin="10 0 0 0">
-                                <TextBlock FontSize="14"  Foreground="Black" Text="Wygenerowanych znaków: "/>
-                                <TextBlock FontSize="14" x:Name="counter" FontWeight="DemiBold" Foreground="Black" Text="0"/>
-                                <TextBlock FontSize="14"  Foreground="Black" Text=" w "/>
-                                <TextBlock FontSize="14"  x:Name="time" FontWeight="DemiBold" Foreground="Black" Text="0m 0s 0ms"/>
-                            </WrapPanel>
-                            <CheckBox x:Name="checkbox" Margin="10 10 5 10" Unchecked="CheckBox_Unchecked" Checked="CheckBox_Checked">Pokaż klucz w polu poniżej</CheckBox>
-                            <TextBox x:Name="keyTextBox" MaxHeight="408" MinHeight="408" VerticalScrollBarVisibility="Auto" IsReadOnly="True" AcceptsReturn="True" Background="#21232C" Foreground="#E4DFDA" Padding="6" Margin="10,0,10,5" TextWrapping="Wrap" FontSize="12" Text="" Height="339" />
-                            <WrapPanel>
-                                <Button x:Name="keySaveButton" Visibility="Collapsed" Width="219" HorizontalAlignment="Left"  Click="keySaveButton_Click" Background="Linen" Margin="10,0,5,5" Height="32" Content="Zapisz klucz do pliku"/>
-                                <Button x:Name="infoSaveButton" Visibility="Collapsed" Width="219" HorizontalAlignment="Right" Click="infoSaveButton_Click" Background="BlanchedAlmond" Margin="0,0,10,5" Height="32" Content="Zapisz rejestry do pliku"/>
-                            </WrapPanel>
-                        </StackPanel>
-                    </WrapPanel>
+                            </StackPanel>
+                            <StackPanel Width="464" Margin="10 10 0 10" HorizontalAlignment="Right">
+                                <WrapPanel Margin="10 0 0 0">
+                                    <TextBlock FontSize="14"  Foreground="Black" Text="Wygenerowanych znaków: "/>
+                                    <TextBlock FontSize="14" x:Name="counter" FontWeight="DemiBold" Foreground="Black" Text="0"/>
+                                    <TextBlock FontSize="14"  Foreground="Black" Text=" w "/>
+                                    <TextBlock FontSize="14"  x:Name="time" FontWeight="DemiBold" Foreground="Black" Text="0m 0s 0ms"/>
+                                </WrapPanel>
+                                <CheckBox x:Name="checkbox" Margin="10 10 5 10" Unchecked="CheckBox_Unchecked" Checked="CheckBox_Checked">Pokaż klucz w polu poniżej</CheckBox>
+                                <TextBox x:Name="keyTextBox" MaxHeight="408" MinHeight="408" VerticalScrollBarVisibility="Auto" IsReadOnly="True" AcceptsReturn="True" Background="#21232C" Foreground="#E4DFDA" Padding="6" Margin="10,0,10,5" TextWrapping="Wrap" FontSize="12" Text="" Height="339" />
+                                <WrapPanel>
+                                    <Button x:Name="keySaveButton" Visibility="Collapsed" Width="219" HorizontalAlignment="Left"  Click="keySaveButton_Click" Background="Linen" Margin="10,0,5,5" Height="32" Content="Zapisz klucz do pliku"/>
+                                    <Button x:Name="infoSaveButton" Visibility="Collapsed" Width="219" HorizontalAlignment="Right" Click="infoSaveButton_Click" Background="BlanchedAlmond" Margin="0,0,10,5" Height="32" Content="Zapisz rejestry do pliku"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </WrapPanel>
 
-                </StackPanel>
-            </Grid>
-        </TabItem>
-        <TabItem Header="Krok po kroku - Generator">
-            <ScrollViewer ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
-                <StackPanel x:Name="stepbystepStackPanel" >
-                    <StackPanel  Margin="70 20">
-                        <TextBlock FontSize="14" Foreground="AntiqueWhite" Text="Wprowadź zawartość rejestrów: kolejno 3, 4 i 5 bitów"/>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*" />
-                                <ColumnDefinition Width="1*" />
-                                <ColumnDefinition Width="1*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBox x:Name="t1a" Grid.Column="0" Text="101" Margin="0 5 10 5" TextChanged="t1a_TextChanged" MaxLength="3"  Height="Auto"  MinHeight="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
-                            <TextBox x:Name="t1b" Grid.Column="1" Text="0010" Margin="10 5 10 5" TextChanged="t1a_TextChanged" MaxLength="4"  Height="Auto"  MinHeight="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
-                            <TextBox x:Name="t1c" Grid.Column="2" Text="10111" Margin="10 5 0 5" TextChanged="t1a_TextChanged" MaxLength="5"  Height="Auto"  MinHeight="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
-                        </Grid>
-                        <Button x:Name="b1" Content="Kolejny krok" Height="40" Click="b1_Click"/>
                     </StackPanel>
-                    <StackPanel Margin="70 10" x:Name="sp2" Visibility="Collapsed">
-                        <TextBlock FontSize="14" Foreground="AntiqueWhite" Text="Przedstawienie rejestrów."/>
-                        <StackPanel Background="AntiqueWhite"  Margin="0 10 0 10" x:Name="generatedRegistersStackPanelStepByStep"></StackPanel>
-                        <Button x:Name="b2" Content="Kolejna iteracja" Height="40" Click="b2_Click"/>
-                        <TextBlock FontSize="13" Margin="0 10 0 0" Foreground="AntiqueWhite" Text="Jeśli więcej niż połowa rejestrów wypchnie 1 to do klucza dodana zostaje 1, w przeciwnym wypadku 0."/>
-                        <TextBox x:Name="stepByStepKeyTextBox" MaxHeight="100" MinHeight="30" VerticalScrollBarVisibility="Auto" IsReadOnly="True" AcceptsReturn="True" Background="AliceBlue" Foreground="Black" Padding="6" Margin="0,10,0,5" TextWrapping="Wrap" FontSize="12" Text=""></TextBox>
-                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="FIPS" Width="{Binding ElementName=c1, Path=ActualWidth}">
+                <Grid Background="#21232C">
+                    <StackPanel Background="MistyRose" ScrollViewer.HorizontalScrollBarVisibility="Disabled" MinHeight="523" ScrollViewer.VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" Margin="10" VerticalAlignment="Top" Width="968" Height="623">
+                        <TextBlock Margin="15,10,15,0"  TextWrapping="Wrap" VerticalAlignment="Top" FontSize="24" FontFamily="Helvetica" FontWeight="Light" Width="Auto" TextAlignment="Center" Text="Testy FIPS 140-2"/>
+                        <Border BorderBrush="Black" BorderThickness="0,1,0,0" Margin="15,8" />
+                        <WrapPanel Margin="132,5,166,5" HorizontalAlignment="Center" Width="670">
+                            <StackPanel Width="650" Margin="10">
+                                <Label>Klucz testowy</Label>
+                                <Button x:Name="loadTestFile" Width="250" Click="loadTestFile_Click"  Background="AliceBlue" Height="32" Content="Wczytaj plik z kluczem testowym"/>
+                                <Label Margin="0 10 0 0">Test pojedynczych bitów</Label>
+                                <WrapPanel Height="40" HorizontalAlignment="Center">
+                                    <Border BorderBrush="Black" BorderThickness="1" Width="50" Height="40" Background="White">
+                                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Background="White" Text="9725 &lt;"/>
+                                    </Border>
+                                    <Border x:Name="TestSingleBitsBorder" BorderThickness="2" Margin="10 0" Width="230" BorderBrush="Black" Background="White">
+                                        <TextBlock x:Name="TestSingleBitsText" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" Text=""/>
+                                    </Border>
+                                    <Border BorderBrush="Black" BorderThickness="1" Width="50" Background="White">
+                                        <TextBlock Padding="10" VerticalAlignment="Center" HorizontalAlignment="Center" Background="White" Text="&lt; 10275"/>
+                                    </Border>
+                                </WrapPanel>
+                                <WrapPanel>
+                                    <Label Margin="0,10,10,0" Width="200">Test serii</Label>
+                                    <Label Margin="0,10,10,0" HorizontalContentAlignment="Center" Width="110">Dla jedynek</Label>
+                                    <Label Margin="0,10,10,0" Content="Dla zer" HorizontalContentAlignment="Center" Width="110"/>
+                                </WrapPanel>
+                                <WrapPanel Height="30" HorizontalAlignment="Center">
+                                    <Label Margin="-90 0 0 0">Długość = 1</Label>
 
-                </StackPanel>
-            </ScrollViewer>
-        </TabItem>
-        <TabItem Header="Pomoc">
-            <ScrollViewer>
-                <TextBox x:Name="help" FontSize="12" AcceptsReturn="True" TextWrapping="Wrap" IsReadOnly="True"/>
-            </ScrollViewer>
-        </TabItem>
-    </TabControl>
+                                    <Border BorderBrush="Black" BorderThickness="1" Width="50"  Background="White">
+                                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Background="White" Text="2315 &lt;"/>
+                                    </Border>
+                                    <Border x:Name="TestSeriesBorder1" BorderThickness="2" Margin="10 0" Width="110" BorderBrush="Black" Background="White">
+                                        <TextBlock x:Name="TestSeriesText1" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" Text=""/>
+                                    </Border>
+                                    <Border x:Name="TestSeriesBorder10" BorderThickness="2" Margin="0 0 10 0" Width="110" BorderBrush="Black" Background="White">
+                                        <TextBlock x:Name="TestSeriesText10" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" Text=""/>
+                                    </Border>
+                                    <Border BorderBrush="Black" BorderThickness="1" Width="50" Background="White">
+                                        <TextBlock Padding="0" VerticalAlignment="Center" HorizontalAlignment="Center" Background="White" Text="&lt; 2685"/>
+                                    </Border>
+                                </WrapPanel>
+                                <WrapPanel Margin="0 5 0 0" Height="30" HorizontalAlignment="Center">
+                                    <Label Margin="-90 0 0 0">Długość = 2</Label>
+
+                                    <Border BorderBrush="Black" BorderThickness="1" Width="50"  Background="White">
+                                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Background="White" Text="1114 &lt;"/>
+                                    </Border>
+                                    <Border x:Name="TestSeriesBorder2" BorderThickness="2" Margin="10 0" Width="110" BorderBrush="Black" Background="White">
+                                        <TextBlock x:Name="TestSeriesText2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" Text=""/>
+                                    </Border>
+                                    <Border x:Name="TestSeriesBorder20" BorderThickness="2" Margin="0 0 10 0" Width="110" BorderBrush="Black" Background="White">
+                                        <TextBlock x:Name="TestSeriesText20" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" Text=""/>
+                                    </Border>
+                                    <Border BorderBrush="Black" BorderThickness="1" Width="50" Background="White">
+                                        <TextBlock Padding="0" VerticalAlignment="Center" HorizontalAlignment="Center" Background="White" Text="&lt; 1386"/>
+                                    </Border>
+                                </WrapPanel>
+                                <WrapPanel Margin="0 5 0 0" Height="30" HorizontalAlignment="Center">
+                                    <Label Margin="-90 0 0 0">Długość = 3</Label>
+
+                                    <Border BorderBrush="Black" BorderThickness="1" Width="50"  Background="White">
+                                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Background="White" Text="527 &lt;"/>
+                                    </Border>
+                                    <Border x:Name="TestSeriesBorder3" BorderThickness="2" Margin="10 0" Width="110" BorderBrush="Black" Background="White">
+                                        <TextBlock x:Name="TestSeriesText3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" Text=""/>
+                                    </Border>
+                                    <Border x:Name="TestSeriesBorder30" BorderThickness="2" Margin="0 0 10 0" Width="110" BorderBrush="Black" Background="White">
+                                        <TextBlock x:Name="TestSeriesText30" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" Text=""/>
+                                    </Border>
+                                    <Border BorderBrush="Black" BorderThickness="1" Width="50" Background="White">
+                                        <TextBlock Padding="0" VerticalAlignment="Center" HorizontalAlignment="Center" Background="White" Text="&lt; 723"/>
+                                    </Border>
+                                </WrapPanel>
+                                <WrapPanel Margin="0 5 0 0" Height="30" HorizontalAlignment="Center">
+                                    <Label Margin="-90 0 0 0">Długość = 4</Label>
+
+                                    <Border BorderBrush="Black" BorderThickness="1" Width="50"  Background="White">
+                                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Background="White" Text="240 &lt;"/>
+                                    </Border>
+                                    <Border x:Name="TestSeriesBorder4" BorderThickness="2" Margin="10 0" Width="110" BorderBrush="Black" Background="White">
+                                        <TextBlock x:Name="TestSeriesText4" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" Text=""/>
+                                    </Border>
+                                    <Border x:Name="TestSeriesBorder40" BorderThickness="2" Margin="0 0 10 0" Width="110" BorderBrush="Black" Background="White">
+                                        <TextBlock x:Name="TestSeriesText40" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" Text=""/>
+                                    </Border>
+                                    <Border BorderBrush="Black" BorderThickness="1" Width="50" Background="White">
+                                        <TextBlock Padding="0" VerticalAlignment="Center" HorizontalAlignment="Center" Background="White" Text="&lt; 384"/>
+                                    </Border>
+                                </WrapPanel>
+                                <WrapPanel Margin="0 5 0 0" Height="30" HorizontalAlignment="Center">
+                                    <Label Margin="-90 0 0 0">Długość = 5</Label>
+                                    <Border BorderBrush="Black" BorderThickness="1" Width="50"  Background="White">
+                                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Background="White" Text="103 &lt;"/>
+                                    </Border>
+                                    <Border x:Name="TestSeriesBorder5" BorderThickness="2" Margin="10 0" Width="110" BorderBrush="Black" Background="White">
+                                        <TextBlock x:Name="TestSeriesText5" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" Text=""/>
+                                    </Border>
+                                    <Border x:Name="TestSeriesBorder50" BorderThickness="2" Margin="0 0 10 0" Width="110" BorderBrush="Black" Background="White">
+                                        <TextBlock x:Name="TestSeriesText50" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" Text=""/>
+                                    </Border>
+                                    <Border BorderBrush="Black" BorderThickness="1" Width="50" Background="White">
+                                        <TextBlock Padding="0" VerticalAlignment="Center" HorizontalAlignment="Center" Background="White" Text="&lt; 209"/>
+                                    </Border>
+                                </WrapPanel>
+                                <WrapPanel Margin="0 5 0 0" Height="30" HorizontalAlignment="Center">
+                                    <Label Margin="-90 0 0 0">Długość > 5 </Label>
+                                    <Border BorderBrush="Black" BorderThickness="1" Width="50"  Background="White">
+                                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Background="White" Text="103 &lt;"/>
+                                    </Border>
+                                    <Border x:Name="TestSeriesBorder6" BorderThickness="2" Margin="10 0" Width="110" BorderBrush="Black" Background="White">
+                                        <TextBlock x:Name="TestSeriesText6" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" Text=""/>
+                                    </Border>
+                                    <Border x:Name="TestSeriesBorder60" BorderThickness="2" Margin="0 0 10 0" Width="110" BorderBrush="Black" Background="White">
+                                        <TextBlock x:Name="TestSeriesText60" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" Text=""/>
+                                    </Border>
+                                    <Border BorderBrush="Black" BorderThickness="1" Width="50" Background="White">
+                                        <TextBlock Padding="0" VerticalAlignment="Center" HorizontalAlignment="Center" Background="White" Text="&lt; 209"/>
+                                    </Border>
+                                </WrapPanel>
+
+                                <Label Margin="0 10 0 0">Test długiej serii</Label>
+                                <WrapPanel Height="40" HorizontalAlignment="Center">
+                                    <Border BorderBrush="Black" BorderThickness="1" Width="50" Height="40" Background="White">
+                                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Background="White" Text="0 &lt;"/>
+                                    </Border>
+                                    <Border x:Name="TestLongSeriesBorder" BorderThickness="2" Margin="10 0" Width="230" BorderBrush="Black" Background="White">
+                                        <TextBlock x:Name="TestLongSeriesText" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" Text=""/>
+                                    </Border>
+                                    <Border BorderBrush="Black" BorderThickness="1" Width="50" Background="White">
+                                        <TextBlock Padding="10" VerticalAlignment="Center" HorizontalAlignment="Center" Background="White" Text="&lt; 26"/>
+                                    </Border>
+                                </WrapPanel>
+
+                                <Label Margin="0 10 0 0">Test pokerowy</Label>
+                                <WrapPanel Height="40" HorizontalAlignment="Center">
+                                    <Border BorderBrush="Black" BorderThickness="1" Width="50" Height="40" Background="White">
+                                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Background="White" Text="2.16 &lt;"/>
+                                    </Border>
+                                    <Border x:Name="TestPokerBorder" BorderThickness="2" Margin="10 0" Width="230" BorderBrush="Black" Background="White">
+                                        <TextBlock x:Name="TestPokerText" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" Text=""/>
+                                    </Border>
+                                    <Border BorderBrush="Black" BorderThickness="1" Width="50" Background="White">
+                                        <TextBlock Padding="10" VerticalAlignment="Center" HorizontalAlignment="Center" Background="White" Text="&lt; 46.17"/>
+                                    </Border>
+                                </WrapPanel>
+
+                            </StackPanel>
+                        </WrapPanel>
+
+
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Krok po kroku - Szyfrator" Width="{Binding ElementName=c1, Path=ActualWidth}">
+                <ScrollViewer ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <StackPanel x:Name="cipherStepbystepStackPanel" >
+                        <StackPanel  Margin="70 20">
+                            <TextBlock FontSize="14" Foreground="AntiqueWhite" Text="Wprowadź tekst jawny i klucz."/>
+                            <Grid Height="210">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="22*"/>
+                                    <ColumnDefinition Width="75*"/>
+                                    <ColumnDefinition Width="162*"/>
+                                    <ColumnDefinition Width="65*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="1*" />
+                                    <RowDefinition Height="1*" />
+                                    <RowDefinition Height="1*" />
+                                    <RowDefinition Height="1*" />
+                                    <RowDefinition Height="1*" />
+                                    <RowDefinition Height="1*" />
+                                </Grid.RowDefinitions>
+                                <Label Foreground="White" Grid.Row="0" FontSize="12" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Grid.ColumnSpan="2">Tekst jawny</Label>
+                                <Label Foreground="White" Grid.Row="1" FontSize="12" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Grid.ColumnSpan="2">Postać binarna tekstu</Label>
+                                <Label Foreground="White" Grid.Row="2" FontSize="12" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Grid.ColumnSpan="2">Klucz</Label>
+                                <Label Foreground="White" Grid.Row="3" FontSize="12" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Grid.ColumnSpan="2">Zaszyfrowany tekst binarnie</Label>
+                                <Label Foreground="White" Grid.Row="4" FontSize="12" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Grid.ColumnSpan="2">Zaszyfrowany tekst</Label>
+                                <TextBox x:Name="textSbs" Grid.Column="2" Grid.Row="0" TextChanged="textSbs_TextChanged" Text="" Margin="10 5 10 5" MaxLength="5"  Height="Auto"  MinHeight="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                                <TextBox x:Name="textBinSbs"  Grid.Column="2" Grid.Row="1" Text="" Margin="10 5 10 5"  MaxLength="40"  Height="Auto"  MinHeight="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="textBinSbs_TextChanged"></TextBox>
+                                <TextBox x:Name="keySbs" Grid.Column="2" Grid.Row="2" Text="0000111100001101010000110000111000000100" Margin="10 5 10 5"  MaxLength="40"  Height="Auto"  MinHeight="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="keySbs_TextChanged"></TextBox>
+                                <TextBox IsReadOnly="True" x:Name="xorBinSbs" Grid.Column="2" Grid.Row="3" Text="" Margin="10 5 10 5"  MaxLength="40"  Height="Auto"  MinHeight="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                                <TextBox IsReadOnly="True"  x:Name="xorSbs" Grid.Column="2" Grid.Row="4" Text="" Margin="10 5 10 5"  MaxLength="5"  Height="Auto"  MinHeight="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                                <Button x:Name="buttonSbs" Grid.Column="2" Grid.Row="5" Margin="10 0" Content="Szyfruj / Deszyfruj" Height="35" Click="buttonSbs_Click"/>
+                            </Grid>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="Krok po kroku - Generator" Width="{Binding ElementName=c1, Path=ActualWidth}">
+                <ScrollViewer ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <StackPanel x:Name="stepbystepStackPanel" >
+                        <StackPanel  Margin="70 20">
+                            <TextBlock FontSize="14" Foreground="AntiqueWhite" Text="Wprowadź zawartość rejestrów: kolejno 3, 4 i 5 bitów"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="t1a" Grid.Column="0" Text="101" Margin="0 5 10 5" TextChanged="t1a_TextChanged" MaxLength="3"  Height="Auto"  MinHeight="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                                <TextBox x:Name="t1b" Grid.Column="1" Text="0010" Margin="10 5 10 5" TextChanged="t1a_TextChanged" MaxLength="4"  Height="Auto"  MinHeight="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                                <TextBox x:Name="t1c" Grid.Column="2" Text="10111" Margin="10 5 0 5" TextChanged="t1a_TextChanged" MaxLength="5"  Height="Auto"  MinHeight="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                            </Grid>
+                            <Button x:Name="b1" Content="Kolejny krok" Height="40" Click="b1_Click"/>
+                        </StackPanel>
+                        <StackPanel Margin="70 10" x:Name="sp2" Visibility="Collapsed">
+                            <TextBlock FontSize="14" Foreground="AntiqueWhite" Text="Przedstawienie rejestrów."/>
+                            <StackPanel Background="AntiqueWhite"  Margin="0 10 0 10" x:Name="generatedRegistersStackPanelStepByStep"></StackPanel>
+                            <Button x:Name="b2" Content="Kolejna iteracja" Height="40" Click="b2_Click"/>
+                            <TextBlock FontSize="13" Margin="0 10 0 0" Foreground="AntiqueWhite" Text="Jeśli więcej niż połowa rejestrów wypchnie 1 to do klucza dodana zostaje 1, w przeciwnym wypadku 0."/>
+                            <TextBox x:Name="stepByStepKeyTextBox" MaxHeight="100" MinHeight="30" VerticalScrollBarVisibility="Auto" IsReadOnly="True" AcceptsReturn="True" Background="AliceBlue" Foreground="Black" Padding="6" Margin="0,10,0,5" TextWrapping="Wrap" FontSize="12" Text=""></TextBox>
+                        </StackPanel>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="Pomoc" Width="{Binding ElementName=c1, Path=ActualWidth}">
+                <ScrollViewer>
+                    <TextBox x:Name="help" FontSize="12" Padding="10" AcceptsReturn="True" TextWrapping="Wrap" IsReadOnly="True"/>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+    </Grid>
 </Window>
